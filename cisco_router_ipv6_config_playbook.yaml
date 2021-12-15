@@ -27,7 +27,7 @@
 
    - name: SHOW IPv6 INTERFACE BRIEF 
      ios_command:
-commands:
+       commands:
          - show ipv6 interface brief
      register: output
 
