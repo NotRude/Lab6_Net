@@ -1,0 +1,37 @@
+---
+- name: CONFIGURE IPv6 ADDRESSING
+  hosts: R1
+  gather_facts: false
+  connection: local
+
+  tasks:
+   - name: ENABLE IPv6 Unicast Routing
+     ios_config:
+       lines: ipv6 unicast-routing
+
+   - name: SET Ethernet0/1 IPv6 ADDRESS 
+     ios_config:
+       parents: "interface Ethernet0/1"
+       lines:
+         - description IPv6 ADDRESS 
+         - ipv6 address 2001:db8:acad:1::1/64
+         - ipv6 address fe80::1:1 link-local
+
+   - name: SET Ethernet0/2 IPv6 ADDRESS 
+     ios_config:
+       parents: "interface Ethernet0/2"
+       lines:
+         - description IPv6 ADDRESS 
+         - ipv6 address 2001:db8:acad:2::1/64
+         - ipv6 address fe80::1:1 link-local
+
+   - name: SHOW IPv6 INTERFACE BRIEF 
+     ios_command:
+commands:
+         - show ipv6 interface brief
+     register: output
+
+   - name: SAVE OUTPUT ./ios_configurations/
+     copy: 
+       content: "{{ output.stdout[0] }}"
+       dest: "ios_configurations/IPv6_output_{{ inventory_hostname }}.txt"
